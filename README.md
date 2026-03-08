@@ -8,7 +8,13 @@ This repo is meant to be easy to install into local skill runtimes such as Agent
 
 ### One-line install from GitHub
 
-Install one skill without keeping a local clone:
+Install one skill with `curl`. The installer will:
+
+1. fetch the installer script from GitHub
+2. clone or update this repo into a local cache directory
+3. copy the selected skill into a recognized local skills directory
+
+Install one skill:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/yeyitech/skills-repo/main/install.sh) \
@@ -20,6 +26,20 @@ Install all skills:
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/yeyitech/skills-repo/main/install.sh) \
   --all
+```
+
+By default the repo cache lives at:
+
+```bash
+~/.cache/yeyitech/skills-repo
+```
+
+You can override it:
+
+```bash
+SKILLS_REPO_CACHE_DIR=~/project/cache/skills-repo \
+  bash <(curl -fsSL https://raw.githubusercontent.com/yeyitech/skills-repo/main/install.sh) \
+  --skill generate-alipay-wechat-report
 ```
 
 ### Quick install from a local clone
