@@ -1,0 +1,30 @@
+---
+title: Quality
+purpose: Define the checks, invariants, and merge-time expectations that keep the repo healthy.
+owner: TBD
+last_reviewed: __DATE__
+source_of_truth: canonical
+---
+
+# Quality
+
+## Read this when
+
+- adding or changing validation commands
+- touching shared code paths
+- deciding what must be checked before merge
+
+## Required commands
+
+- Build: replace with the repo build command.
+- Test: replace with the repo test command.
+- Lint/Check: replace with the repo lint or check command.
+- Agent structure check: `python3 scripts/agent_repo_check.py`
+
+## Invariants to enforce mechanically
+
+- Add import, layering, parsing, schema, test, or performance rules here.
+
+## Failure policy
+
+- Define what blocks merge versus what can be fixed in follow-up patches.

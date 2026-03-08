@@ -1,0 +1,23 @@
+<!-- agent-harness:start -->
+## Agent Navigation
+
+Treat `AGENTS.md` as a router, not a handbook.
+
+Start with `__DOC_INDEX__`, then open only the docs relevant to the task:
+
+- Architecture: `__DOC_ROOT__/architecture.md`
+- Specs: `__DOC_ROOT__/specs.md`
+- Plans: `__DOC_ROOT__/plans.md`
+- Quality: `__DOC_ROOT__/quality.md`
+- Reliability: `__DOC_ROOT__/reliability.md`
+- Security: `__DOC_ROOT__/security.md`
+__GC_BULLET__
+
+Working rules:
+
+- Move durable detail out of `AGENTS.md` and into `__DOC_ROOT__/*`.
+- Update `last_reviewed` when a document changes materially.
+- Add every active durable doc to `__DOC_INDEX__`.
+- Run `python3 scripts/agent_repo_check.py` after structural changes.
+__GC_LINE__
+<!-- agent-harness:end -->

@@ -1,0 +1,31 @@
+---
+title: Garbage Collection
+purpose: Define how the repo detects and cleans up drift, stale docs, and low-value complexity over time.
+owner: TBD
+last_reviewed: __DATE__
+source_of_truth: canonical
+---
+
+# Garbage Collection
+
+## Read this when
+
+- the repo has drift from many generated changes
+- cleanup work keeps slipping behind feature work
+- you are reviewing a structural hygiene report
+
+## What to review
+
+- stale docs
+- oversized files
+- repeated TODO or FIXME hotspots
+- suspicious filenames like `v2` or `final-final`
+- docs missing from the index
+
+## Cadence
+
+- Replace with a real cadence such as weekly, per release, or daily automation.
+
+## Merge policy
+
+- Prefer reviewable cleanup patches over broad rewrites.

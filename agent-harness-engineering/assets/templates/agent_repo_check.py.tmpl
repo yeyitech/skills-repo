@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import pathlib
+import re
+import sys
+
+REQUIRED_DOCS = [
+    "index.md",
+    "architecture.md",
+    "specs.md",
+    "plans.md",
+    "quality.md",
+    "reliability.md",
+    "security.md",
+]
+REQUIRED_KEYS = ["title", "purpose", "owner", "last_reviewed", "source_of_truth"]
+
+
+def read_text(path: pathlib.Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def extract_frontmatter(text: str) -> str | None:
+    match = re.match(r"^---\n(.*?)\n---\n", text, re.DOTALL)
+    return match.group(1) if match else None
+
+
+def parse_key_set(frontmatter: str) -> set[str]:
+    keys: set[str] = set()
+    for line in frontmatter.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if ":" in stripped and not stripped.startswith("- "):
+            keys.add(stripped.split(":", 1)[0].strip())
+    return keys
+
+
+def extract_value(frontmatter: str, key: str) -> str | None:
+    pattern = re.compile(rf"^{re.escape(key)}:\s*(.+)$", re.MULTILINE)
+    match = pattern.search(frontmatter)
+    return match.group(1).strip() if match else None
+
+
+def valid_iso_date(value: str) -> bool:
+    try:
+        dt.date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Validate agent harness docs and routing.")
+    parser.add_argument("--repo", default=".", help="Repository root")
+    parser.add_argument("--max-doc-age-days", type=int, default=120)
+    parser.add_argument("--strict-staleness", action="store_true")
+    args = parser.parse_args()
+
+    root = pathlib.Path(args.repo).resolve()
+    agents_path = root / "AGENTS.md"
+    docs_root = root / "docs" / "agent"
+    index_path = docs_root / "index.md"
+    failures: list[str] = []
+    warnings: list[str] = []
+
+    if not agents_path.exists():
+        failures.append("Missing AGENTS.md")
+    if not docs_root.exists():
+        failures.append("Missing docs/agent directory")
+
+    expected_docs = list(REQUIRED_DOCS)
+    if (docs_root / "garbage-collection.md").exists():
+        expected_docs.append("garbage-collection.md")
+
+    for name in expected_docs:
+        path = docs_root / name
+        if not path.exists():
+            failures.append(f"Missing {path.relative_to(root)}")
+            continue
+        text = read_text(path)
+        frontmatter = extract_frontmatter(text)
+        if frontmatter is None:
+            failures.append(f"Missing frontmatter in {path.relative_to(root)}")
+            continue
+        keys = parse_key_set(frontmatter)
+        missing_keys = [key for key in REQUIRED_KEYS if key not in keys]
+        if missing_keys:
+            failures.append(
+                f"Missing frontmatter keys in {path.relative_to(root)}: {', '.join(missing_keys)}"
+            )
+        last_reviewed = extract_value(frontmatter, "last_reviewed")
+        if last_reviewed and not valid_iso_date(last_reviewed):
+            failures.append(f"Invalid last_reviewed in {path.relative_to(root)}: {last_reviewed}")
+        if last_reviewed and valid_iso_date(last_reviewed):
+            age = (dt.date.today() - dt.date.fromisoformat(last_reviewed)).days
+            if age > args.max_doc_age_days:
+                message = (
+                    f"Stale doc {path.relative_to(root)}: {age} days since review "
+                    f"(threshold {args.max_doc_age_days})"
+                )
+                if args.strict_staleness:
+                    failures.append(message)
+                else:
+                    warnings.append(message)
+
+    if agents_path.exists():
+        agents_text = read_text(agents_path)
+        for needle in ["docs/agent/index.md", "scripts/agent_repo_check.py"]:
+            if needle not in agents_text:
+                failures.append(f"AGENTS.md is missing `{needle}`")
+
+    if index_path.exists():
+        index_text = read_text(index_path)
+        for name in expected_docs:
+            relative = f"docs/agent/{name}"
+            if relative == "docs/agent/index.md":
+                continue
+            if relative not in index_text:
+                failures.append(f"docs/agent/index.md is missing `{relative}`")
+
+    for warning in warnings:
+        print(f"WARN: {warning}")
+    if failures:
+        for failure in failures:
+            print(f"FAIL: {failure}")
+        return 1
+    print("OK: agent harness structure looks valid")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
