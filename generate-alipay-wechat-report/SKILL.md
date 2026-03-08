@@ -1,6 +1,6 @@
 ---
 name: generate-alipay-wechat-report
-description: Generate an interactive local HTML spending report from native Alipay CSV bills and WeChat Pay XLSX bills. Use when Codex needs to analyze personal spending, payment habits,消费结构、月度趋势、重复商户或优化建议 based on exported 支付宝交易明细 and 微信支付账单流水文件. Trigger on requests to turn raw 支付宝/微信账单 into a digital report, HTML dashboard, spending analysis, consumer habit diagnosis, or budget optimization.
+description: Generate an interactive local HTML spending report from native Alipay CSV exports and WeChat Pay XLSX exports. Use when an agent needs to turn 支付宝交易明细 or 微信支付账单流水文件 into a digital dashboard for expense categorization, monthly trend review, recurring merchant analysis, spending habit diagnosis, and budget optimization.
 ---
 
 # Generate Alipay Wechat Report
