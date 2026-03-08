@@ -6,6 +6,30 @@ This repository contains reusable skills.
 
 This repo is meant to be easy to install into local skill runtimes such as Agents, Codex, or Claude.
 
+### Two-step install: install the installer first
+
+If you want a persistent local command, install the installer once:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/yeyitech/skills-repo/main/bootstrap.sh)
+```
+
+This installs a local command here by default:
+
+```bash
+~/.local/bin/yeyitech-skills
+```
+
+Then you can use it anytime:
+
+```bash
+yeyitech-skills --list
+yeyitech-skills --skill generate-alipay-wechat-report
+yeyitech-skills --all
+```
+
+The installer command will keep a local cache of the GitHub repo, update that cache when needed, then copy the selected skill into a recognized local skills directory.
+
 ### One-line install from GitHub
 
 Install one skill with `curl`. The installer will:
