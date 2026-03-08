@@ -8,6 +8,8 @@ This repository contains reusable skills.
 - `infographic-image.skill` - packaged distributable artifact
 - `agent-harness-engineering/` - full skill source for agent-first engineering scaffolding
 - `agent-harness-engineering.skill` - packaged distributable artifact
+- `generate-alipay-wechat-report/` - full skill source for native Alipay/WeChat bill analysis and HTML spending reports
+- `generate-alipay-wechat-report.skill` - packaged distributable artifact
 
 ## Default behavior
 
